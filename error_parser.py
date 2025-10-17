@@ -120,13 +120,13 @@ class ErrorParser:
         """Classify the error type based on patterns"""
         error_lower = error_message.lower()
         
-        # First check natural language patterns
+      
         for error_type, patterns in self.natural_patterns.items():
             for pattern in patterns:
                 if re.search(pattern, error_lower, re.IGNORECASE):
                     return error_type
         
-        # Then check technical patterns
+       
         for error_type, patterns in self.patterns.items():
             for pattern in patterns:
                 if re.search(pattern, error_message, re.IGNORECASE):
@@ -152,7 +152,7 @@ class ErrorParser:
             if not cmd_match:
                 cmd_match = re.search(r"(?:bash|zsh): ([^:]+): command not found", error_message)
             if not cmd_match:
-                # Try to extract command from natural language
+                
                 cmd_match = re.search(r"(?:can'?t find|command not found).*?([a-zA-Z0-9_-]+)", error_message.lower())
             if cmd_match:
                 components['command'] = cmd_match.group(1)
@@ -162,13 +162,13 @@ class ErrorParser:
             if not file_match:
                 file_match = re.search(r"cannot access (.+?):", error_message)
             if not file_match:
-                # Try to extract filename from natural language
+               
                 file_match = re.search(r"(?:file|open).*?([a-zA-Z0-9_./-]+)", error_message.lower())
             if file_match:
                 components['filename'] = file_match.group(1)
         
         elif error_type == 'permission_denied':
-            # Try to extract what was being accessed
+            
             access_match = re.search(r"(?:access|open|execute).*?([a-zA-Z0-9_./-]+)", error_message.lower())
             if access_match:
                 components['resource'] = access_match.group(1)
@@ -182,14 +182,14 @@ class ErrorParser:
         
         error_lower = error_message.lower()
         
-        # Higher confidence for exact technical patterns
+        
         technical_matches = 0
         if error_type in self.patterns:
             for pattern in self.patterns[error_type]:
                 if re.search(pattern, error_message, re.IGNORECASE):
                     technical_matches += 1
         
-        # Medium confidence for natural language patterns
+        
         natural_matches = 0
         if error_type in self.natural_patterns:
             for pattern in self.natural_patterns[error_type]:
